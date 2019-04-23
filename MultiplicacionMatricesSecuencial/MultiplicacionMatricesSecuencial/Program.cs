@@ -28,13 +28,17 @@ namespace MultiplicacionMatricesSecuencial
         {
             int respuesta = 0;
 
-            int r1 = 900;
-            int c1 = 400;
-            int[,] matrix1 = generateMatrix(r1, c1); //Matriz de 3 filas x 2 columnas
+            Task t1;
 
-            int r2 = 400;
-            int c2 = 900;
-            int[,] matrix2 = generateMatrix(r2, c2); //Matriz de 2 filas x 3 columnas
+            int[] indices = new int[3];
+
+            int r1 = 2;
+            int c1 = 4;
+            int[,] matrix1 = { { 2, 2, 1, 3 }, { 2, 1, 3, 2 } };//generateMatrix(r1, c1); //Matriz de 3 filas x 2 columnas
+
+            int r2 = 4;
+            int c2 = 2;
+            int[,] matrix2 = { { 1, 2 }, { 3, 4 }, { 2, 3 }, { 3, 1 } };//generateMatrix(r2, c2); //Matriz de 2 filas x 3 columnas
 
             if (c1 == r2) //Si el numero de columnas de la 1 es igual al numero de filas de la 2
             {
@@ -42,16 +46,29 @@ namespace MultiplicacionMatricesSecuencial
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
+                
+                
+
                 int[,] matrixResponse = new int[r1, c2];
 
                 for (int i = 0; i < r1; i++)
                 {
                     for (int j = 0; j < c2; j++)
                     {
+                        List<Task> tasks = new List<Task>();
+
                         for (int k = 0; k < c1; k++)
                         {
-                            respuesta += matrix1[i, k] * matrix2[k, j];
+
+                            
+                            t1 = new Task(() =>{
+                                respuesta += matrix1[i,k] * matrix2[k, j];
+                            });
+                            t1.Start();
+                            tasks.Add(t1);
                         }
+                        
+                        Task.WaitAll(tasks.ToArray());
                         matrixResponse[i, j] = respuesta;
                         respuesta = 0;
                     }
@@ -72,6 +89,7 @@ namespace MultiplicacionMatricesSecuencial
                 }
 
                 Console.WriteLine("El programa demoró " + (sw.ElapsedMilliseconds / 1000) + "seg.");
+                Console.ReadLine();
 
             }
             else
